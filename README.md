@@ -1,6 +1,6 @@
 # react-ctx-store
 
-> A small react-context wrapper, which makes context more performent, scalable and easy to use, scalable and easy to use for large projects.
+> A React context wrapper, which makes context more performant, scalable and easy to use.
 
 ## Why?
 
