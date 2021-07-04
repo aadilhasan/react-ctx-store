@@ -4,7 +4,7 @@ export interface BaseState {
 }
 
 export interface BaseUpdaters<State = BaseState> {
-  [key: string]: (...rest: any) => Partial<State>
+  [key: string]: (...rest: any) => Partial<State> | Promise<Partial<State>>
 }
 
 export type CustomContext<S, U> = React.Context<{

@@ -11,7 +11,14 @@ const { Consumer, Provider, connect } = createContext(
     },
     updateTime: () => ({
       time: Date.now()
-    })
+    }),
+    asyncTask: (state) => {
+      return new Promise((_, reject) => {
+        reject({
+          theme: state.theme + 'ASYNC'
+        })
+      })
+    }
   }
 )
 
@@ -47,9 +54,9 @@ const App = () => {
         <Hello />
       </Consumer>
       <Consumer
-        mapContextToProps={({ toggleTheme }) => ({
+        mapContextToProps={({ asyncTask }) => ({
           theme: 'red',
-          toggleTheme: () => toggleTheme('blue')
+          toggleTheme: asyncTask
         })}
       >
         <Hello />

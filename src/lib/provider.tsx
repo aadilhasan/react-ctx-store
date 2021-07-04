@@ -16,9 +16,16 @@ export const getProviderClass = <State, Updaters extends BaseUpdaters>(
 
     setUpdaters = (updaters: BaseUpdaters) => {
       for (const key in updaters) {
-        this.updaters[key] = (...args: any) => {
+        this.updaters[key] = async (...args: any) => {
           // log action if required
-          this.setState({ ...updaters[key](this.state, ...args) })
+          let res = updaters[key](this.state, ...args)
+          if (res instanceof Promise) {
+            res.then((res) => {
+              this.setState({ ...res })
+            })
+          } else {
+            this.setState({ ...res })
+          }
         }
       }
     }
