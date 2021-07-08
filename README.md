@@ -39,7 +39,7 @@ const updaters = {
 
 const {Consumer, Provider} = createContext(store, updaters)
 
-const CounterComponent = ({count, updateCount}) => {
+function CounterComponent ({count, updateCount}) {
   return (
     <div>
       <span>{count}</span>
@@ -48,16 +48,14 @@ const CounterComponent = ({count, updateCount}) => {
   )
 }
 
-class Example extends Component {
-  render() {
-    return (
+export function ExampleApp (){
+  return (
       <Provider>
-        <Consumer mapContextToProps={['count', 'updateCount]}>
+        <Consumer mapContextToProps={['count', 'updateCount']}>
           <CounterComponent/>
         </Consumer>
       </Provider>
     )
-  }
 }
 ```
 
@@ -66,10 +64,31 @@ class Example extends Component {
 ```tsx
 import { creatContext } from 'react-ctx-store'
 
-const { Consumer, Provider, connect, _context } = createContext(store, updaters)
+const store = {
+  count: 0,
+}
+
+// an object of where every key should be an string and value should be a function which will update the store
+const updaters = {
+  updateCount: (store, ...rest) => {
+    return {
+      count: store.count + 1;
+    }
+  }
+}
+
+const { Consumer, Provider, connect, useStore, _context } = createContext(
+  store,
+  updaters
+)
 ```
 
-`react-ctx-store` exposes one single method `createContext`, which returns following Components and methods:
+`react-ctx-store` exposes one single method `createContext` which takes 2 arguments
+
+- Store - a javascript object.
+- Updaters - an object of functions, only these functions can update the store, every updater function receives store as the first argument, and rest of the argument can be passed by the caller function. To update the store updater function will have to return an updated store value.
+
+`createContext` returns following Components and methods:
 
 #### 1. Provider
 
@@ -127,10 +146,65 @@ or
 const App = connect((store) => {count: store.count, update: store.updateCount})(Component)
 ```
 
+#### 3. useStore
+
+A hook, which returns store and updaters.
+
+Note: the component using useStore hook will re-render if any value changes in the store.
+
+```tsx
+function WithHooks() {
+  const { count, updateCount } = useStore()
+  return (
+    <div>
+      <span>{count}</span>
+      <button onClick={updateCount}>Update Count</button>
+    </div>
+  )
+}
+```
+
 #### 4. \_context
 
 A React Context object which is being used to store the the values, it is being exposted in cause a user wants to have acess to original Context.
-A good use case example would be using \_context with `useContext` hooks.
+
+### Examples
+
+#### Async operation in updaters
+
+```tsx
+import { createContext } from 'react-ctx-store'
+
+const store = {
+  userData: null
+}
+
+const updaters = {
+  fetchUserData: async (store, userId) => {
+    const userData = await fetch('.../user/' + userId)
+    return { userData }
+  }
+}
+
+const { Consumer, Provider } = createContext(store, updaters)
+
+function UserProfile({ userData, fetchUserData }) {
+  useEffect(() => {
+    fetchUserData('123')
+  }, [])
+  return <div>UserName: {userData.name}</div>
+}
+
+export function App() {
+  return (
+    <Provider>
+      <Consumer mapContextToProps={['userData', 'fetchUserData']}>
+        <UserProfile />
+      </Consumer>
+    </Provider>
+  )
+}
+```
 
 ## License
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createContext } from '.'
 
 import Enzyme from 'enzyme'
@@ -23,7 +23,7 @@ const updater = {
   }
 }
 
-const { Provider, Consumer } = createContext(State, updater)
+const { Provider, Consumer, useStore } = createContext(State, updater)
 
 interface CompProps extends Partial<typeof State & typeof updater> {
   didUpdate: () => {}
@@ -64,6 +64,21 @@ class Comp2 extends React.Component<CompProps> {
       </div>
     )
   }
+}
+
+const CompWithHooks = ({ didUpdate }: any) => {
+  const { count, updateCount } = useStore()
+  useEffect(() => {
+    didUpdate && didUpdate()
+  }, [count])
+  return (
+    <div>
+      <span id='count'>{count}</span>
+      <button id='update-count' onClick={updateCount}>
+        Update Count
+      </button>
+    </div>
+  )
 }
 
 const App = ({ didUpdate1, didUpdate2 }: any) => {
@@ -141,5 +156,27 @@ describe('ExampleComponent', () => {
     app.find('#update-time').simulate('click')
     expect(fn2).toBeCalledTimes(1)
     expect(fn).not.toBeCalled()
+  })
+
+  it('useStore hook should work fine', () => {
+    const App = ({ didUpdate }: any) => {
+      return (
+        <Provider>
+          <CompWithHooks didUpdate={didUpdate} />
+        </Provider>
+      )
+    }
+    const _app = Enzyme.mount(<App />)
+    let fn = jest.fn()
+    _app.setProps({
+      didUpdate: () => {
+        console.log('called')
+        fn()
+      }
+    })
+    expect(_app.find('#count').html()).toMatch('' + State.count)
+    _app.find('#update-count').simulate('click')
+    expect(fn).toBeCalledTimes(1)
+    expect(_app.find('#count').html()).toMatch('' + (State.count + 1))
   })
 })

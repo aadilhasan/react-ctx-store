@@ -1,7 +1,7 @@
 import React from 'react'
 import { createContext } from 'react-ctx-store'
 
-const { Consumer, Provider, connect } = createContext(
+const { Consumer, Provider, connect, useStore } = createContext(
   { theme: 'dark', time: Date.now() },
   {
     toggleTheme: (state: any, newTheme: string) => {
@@ -29,6 +29,18 @@ const Hello = ({ theme, toggleTheme }: any) => {
     <div>
       <h1> Theme: {theme}</h1>
       <button onClick={() => toggleTheme()}> toggle theme </button>
+    </div>
+  )
+}
+
+const WithHooks = () => {
+  const { time: date, updateTime: updateDate } = useStore()
+  console.log(' re-render WithHooks')
+  return (
+    <div>
+      <h1> WITH hooks</h1>
+      <h2> Date: {date}</h2>
+      <button onClick={updateDate}> updateDate </button>
     </div>
   )
 }
@@ -61,6 +73,7 @@ const App = () => {
       >
         <Hello />
       </Consumer>
+      <WithHooks />
       <ConnectedComp />
     </Provider>
   )
