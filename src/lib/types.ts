@@ -1,14 +1,14 @@
 import React from 'react'
-export interface BaseState {
+export interface BaseStore {
   [key: string]: any
 }
 
-export interface BaseUpdaters<State = BaseState> {
-  [key: string]: (...rest: any) => Partial<State> | Promise<Partial<State>>
+export interface BaseUpdaters<Store = BaseStore> {
+  [key: string]: (...rest: any) => Partial<Store> | Promise<Partial<Store>>
 }
 
 export type CustomContext<S, U> = React.Context<{
-  state: S
+  store: S
   updaters: U
 }>
 
@@ -16,15 +16,15 @@ type DropFirst<T extends any[]> = T extends [any, ...infer U] ? U : T
 
 type Params<F extends (...args: any) => any> = DropFirst<Parameters<F>>
 
-type UpdatersWithoutStateArgument<C extends BaseUpdaters> = {
-  [key in keyof C]: (...args: Params<C[keyof C]>) => Partial<BaseState>
+type UpdatersWithoutStoreArgument<C extends BaseUpdaters> = {
+  [key in keyof C]: (...args: Params<C[keyof C]>) => Partial<BaseStore>
 }
 
 export type MapContextToProps<
-  State extends BaseState,
+  Store extends BaseStore,
   Updaters extends BaseUpdaters
 > =
-  | ((context: State & UpdatersWithoutStateArgument<Updaters>) => {
+  | ((context: Store & UpdatersWithoutStoreArgument<Updaters>) => {
       [key: string]: any
     })
-  | Array<keyof State | keyof Updaters>
+  | Array<keyof Store | keyof Updaters>

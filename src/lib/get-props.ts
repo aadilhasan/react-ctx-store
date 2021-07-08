@@ -1,13 +1,12 @@
 import { BaseUpdaters, MapContextToProps } from './types'
-
-export const getProps = <State, Updaters extends BaseUpdaters>(
-  prevProps: Partial<State & Updaters>,
-  mapContextToProps: MapContextToProps<State, Updaters>,
-  state: State,
+export const getProps = <Store, Updaters extends BaseUpdaters>(
+  prevProps: Partial<Store & Updaters>,
+  mapContextToProps: MapContextToProps<Store, Updaters>,
+  store: Store,
   updaters: Updaters
-): Partial<State & Updaters> => {
-  let props: Partial<State & Updaters> = {}
-  const context: any = { ...state, ...updaters }
+): Partial<Store & Updaters> => {
+  let props: Partial<Store & Updaters> = {}
+  const context: any = { ...store, ...updaters }
   let hasChanged = false
   if (Array.isArray(mapContextToProps)) {
     mapContextToProps.forEach((prop) => {
@@ -18,8 +17,8 @@ export const getProps = <State, Updaters extends BaseUpdaters>(
       }
     })
   } else {
-    props = mapContextToProps(context) as Partial<State & Updaters>
-    let key: keyof Partial<State & Updaters>
+    props = mapContextToProps(context) as Partial<Store & Updaters>
+    let key: keyof Partial<Store & Updaters>
     for (key in props) {
       const oldProp = prevProps[key]
       if (!oldProp || props[key] !== oldProp) {

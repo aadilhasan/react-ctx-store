@@ -5,22 +5,22 @@ import { BaseUpdaters } from './types'
 import { getConnect } from './connect'
 
 export const createContext = <
-  State extends {},
-  Updaters extends BaseUpdaters<State>
+  Store extends {},
+  Updaters extends BaseUpdaters<Store>
 >(
-  state: State,
+  store: Store,
   updaters: Updaters
 ) => {
   const Context = React.createContext({
-    state: { ...state },
+    store: { ...store },
     updaters: { ...updaters }
   })
   const Consumer = getConsumerClass(Context)
 
   return {
     Consumer,
-    Provider: getProviderClass(state, updaters, Context),
-    connect: getConnect<State, Updaters>(Consumer),
+    Provider: getProviderClass(store, updaters, Context),
+    connect: getConnect<Store, Updaters>(Consumer),
     _context: Context
   }
 }

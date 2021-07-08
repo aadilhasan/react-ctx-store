@@ -7,22 +7,22 @@ const RenderChildren = React.memo(({ renderChildren, props }: any) => {
   })
 })
 
-export const getConsumerClass = <State, Updaters extends BaseUpdaters>(
-  Context: CustomContext<State, Updaters>
+export const getConsumerClass = <Store, Updaters extends BaseUpdaters>(
+  Context: CustomContext<Store, Updaters>
 ) => {
   return class Consumer extends PureComponent<{
-    mapContextToProps: MapContextToProps<State, Updaters>
+    mapContextToProps: MapContextToProps<Store, Updaters>
   }> {
-    prevProps: Partial<State & Updaters> = {}
+    prevProps: Partial<Store & Updaters> = {}
     render() {
       const { mapContextToProps } = this.props
       return (
         <Context.Consumer>
-          {({ state, updaters }) => {
+          {({ store, updaters }) => {
             this.prevProps = getProps(
               this.prevProps,
               mapContextToProps,
-              state,
+              store,
               updaters
             )
             return (
