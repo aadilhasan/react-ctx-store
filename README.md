@@ -6,7 +6,7 @@
 
 React context is good, but it is not good for medium to big projects, it has following problems:
 
-- re-rendering, context re-renders all the subsribers doesn't metter if the subsriber is using the updated property or not.
+- re-rendering, context re-renders all the subscriber doesn't matter if the subscriber is using the updated property or not.
 - scalability, context has this re-rendering issue, one single store is not possible so multiple context are required.
 - there is not simple way to update the context, it requires a bit of extra code.
 
@@ -83,16 +83,16 @@ const { Consumer, Provider, connect, useStore, _context } = createContext(
 )
 ```
 
-`react-ctx-store` exposes one single method `createContext` which takes 2 arguments
+`react-ctx-store` exports one single method `createContext` which takes 2 arguments
 
 - Store - a javascript object.
 - Updaters - an object of functions, only these functions can update the store, every updater function receives store as the first argument, and rest of the argument can be passed by the caller function. To update the store updater function will have to return an updated store value.
 
-`createContext` returns following Components and methods:
+`createContext` method returns following Components and methods:
 
 #### 1. Provider
 
-A React component allows consuming components to subscribe to context changes, similar to React Context Provider.
+A React component which allows consuming components to subscribe to a context changes, similar to React Context Provider.
 
 Usage:
 
@@ -109,8 +109,8 @@ function Example() {
 
 #### 2. Consumer
 
-A React Component that subscribe to the values of the store/context.
-Consumer takes a single prop `mapContextToProps` which take an array of properties or a callback function as value
+A React Component that can subscribe to the values of the store/context.
+Consumer takes a single prop `mapContextToProps` which takes an array of properties or a callback function as value.
 
 Usage:
 
@@ -166,7 +166,7 @@ function WithHooks() {
 
 #### 4. \_context
 
-A React Context object which is being used to store the the values, it is being exposted in cause a user wants to have acess to original Context.
+A React Context object which is internally being used to store the values, it is exposted in case a user wants to have access to original Context.
 
 ### Examples
 
